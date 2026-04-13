@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.16">
+  <DUT Name="Motor_State" Id="{31c00bc5-dad4-419e-b7f7-833ad6beb4e6}">
+    <Declaration><![CDATA[
+TYPE Motor_State:
+(
+	STM_IDLE,
+	STM_STARTING,
+	STM_RUNNING,
+	STM_STOPPING,
+	STM_FAULT
+);
+END_TYPE
+
+
+
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

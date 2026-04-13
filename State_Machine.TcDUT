@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.16">
+  <DUT Name="State_Machine" Id="{3c2851b1-07bd-460d-8190-bbf3a91e9375}">
+    <Declaration><![CDATA[
+TYPE State_Machine :
+(
+	ST_IDLE,
+    ST_RUN,
+    ST_ERROR
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

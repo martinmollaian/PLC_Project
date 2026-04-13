@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.16">
+  <DUT Name="Valve_Error" Id="{15b57a2a-fa59-413e-acf7-a026a0f71473}">
+    <Declaration><![CDATA[TYPE Valve_Error :
+(   
+	NONE,
+	TIME_OUT_OPEN,
+	TIME_OUT_CLOSE,
+	INVALID_FEEDBACK,
+	E_STOP_ACTIVE,
+	INTERLOCKV_OPEN
+);
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>
