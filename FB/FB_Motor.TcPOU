@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.16">
+  <POU Name="FB_Motor" Id="{b8c1a77e-6bd1-4ce3-86a9-45a88de9e017}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Motor
+VAR_INPUT
+	Start : BOOL;
+	Stop : BOOL;
+	MotorFeedback : BOOL;
+	Reset : BOOL;
+	EStop : BOOL;
+    InterlockOK : BOOL;
+END_VAR
+VAR_OUTPUT
+	MotorCmd: BOOL;
+	Fault : BOOL;
+	Running : BOOL;
+	Error: Motor_Error;
+	Warning : BOOL;
+	StartCounter : DINT;
+END_VAR
+
+VAR
+	State : Motor_State := STM_IDLE;
+	tStartTimeout : TON;
+	StartTrigger : R_TRIG;
+	tWarning : TON;
+	tStartTimeout_ET : TIME;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF EStop THEN
+    MotorCmd := FALSE;
+    Running := FALSE;
+    Fault := TRUE;
+    Error := ESTOP_ACTIVE;
+    State := STM_FAULT;
+    RETURN;
+END_IF
+
+IF NOT InterlockOK THEN
+    MotorCmd := FALSE;
+    Fault := TRUE;
+    Error := INTERLOCKM_OPEN;
+    State := STM_FAULT;
+	RETURN;
+END_IF
+
+StartTrigger(CLK:=Start);
+tStartTimeout(IN:= FALSE);
+Fault := FALSE;
+
+CASE State OF
+	
+	STM_IDLE:
+	     MotorCmd := FALSE;
+		 Running := FALSE;
+		 IF StartTrigger.Q THEN
+			 State := STM_STARTING;
+		 END_IF
+	 
+	STM_STARTING:
+	     MotorCmd := TRUE;
+	     tStartTimeout(IN := TRUE, PT:=T#5S);
+		 tStartTimeout_ET := tStartTimeout.ET;
+		 IF MotorFeedback THEN
+			 State := STM_RUNNING;
+		 END_IF
+		 IF tStartTimeout.Q THEN
+			 Fault := TRUE;
+			 Error := START_TIMEOUT;
+			 State := STM_FAULT;
+		 END_IF
+		 
+	 STM_RUNNING:
+	     Running := TRUE;
+		 MotorCmd :=TRUE;
+	     IF Stop THEN
+			 State := STM_STOPPING;
+		 END_IF
+		 IF NOT MotorFeedback THEN
+			 Error:= FEEDBACK_LOST;
+			 State:= STM_FAULT;
+		 END_IF
+		 
+     STM_STOPPING:
+	     Running:= FALSE;
+		 MotorCmd:= FALSE;
+		 IF NOT MotorFeedback THEN
+			 State := STM_IDLE;
+		 END_IF
+  
+	 STM_FAULT:
+        MotorCmd := FALSE;
+        Running := FALSE;
+        Fault := TRUE;
+
+        IF Reset THEN
+            Fault := FALSE;
+			Error := NO_ERROR;
+            State := STM_IDLE;
+        END_IF
+		
+END_CASE
+
+tWarning(IN:= MotorCmd AND NOT MotorFeedback, PT := T#1S);
+IF tWarning.Q THEN
+	Warning := TRUE;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Motor">
+      <LineId Id="44" Count="13" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="58" Count="2" />
+      <LineId Id="153" Count="2" />
+      <LineId Id="61" Count="6" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="75" Count="47" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
