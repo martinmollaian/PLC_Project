@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.16">
+  <GVL Name="GVL" Id="{41ae355d-2b94-45c0-8937-6823f4319711}">
+    <Declaration><![CDATA[
+VAR_GLOBAL
+	// INPUT FISICI
+Start        : BOOL;
+Stop         : BOOL;
+PieceSensor  : BOOL;
+EStop        : BOOL;
+InterlockOK  : BOOL;
+Reset        : BOOL;
+
+// OUTPUT FISICI
+MotorOut      : BOOL;
+ValveOpenOut  : BOOL;
+ValveCloseOut : BOOL;
+
+SimOpenFB  : BOOL;
+SimCloseFB : BOOL;
+SimMotorFB : BOOL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>
