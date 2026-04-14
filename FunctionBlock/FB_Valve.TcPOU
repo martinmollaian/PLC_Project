@@ -27,6 +27,7 @@ VAR
 	rtReset : R_TRIG;
 	
 	tMove : TON;
+    tMove_ET : TIME;
 	
 	TimeOut : TIME := T#5S;
 END_VAR
@@ -80,6 +81,7 @@ CASE State OF
 	   OpenOut := TRUE;
 	   CloseOut := FALSE;
 	   tMove(IN := TRUE, PT := TimeOut);
+       tMove_ET := tMove.ET;
 	   IF OpenFeedback THEN
 		   State := STV_OPENED;
 	   ELSIF tMove.Q THEN
@@ -87,6 +89,7 @@ CASE State OF
            Error := TIME_OUT_OPEN;
 	   END_IF
 	 STV_OPENED :
+        tMove (IN := FALSE);
 	    OpenOut := TRUE;
 		CloseOut := FALSE;
 		IsOpen := TRUE;
@@ -97,6 +100,7 @@ CASE State OF
 	    OpenOut := FALSE;
 		CloseOut := TRUE;
 		tMove(IN := TRUE, PT := TimeOut);
+        tMove_ET := tMove.ET;
 		IF CloseFeedback THEN
 			State := STV_CLOSED;
 		ELSIF tMove.Q THEN
@@ -104,6 +108,7 @@ CASE State OF
 			Error := TIME_OUT_CLOSE;
 		END_IF
 	STV_CLOSED :
+        tMove (IN := FALSE);
 	    OpenOut := FALSE;
 		CloseOut := TRUE;
 		IsClose := TRUE;
